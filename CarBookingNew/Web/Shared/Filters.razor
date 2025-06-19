@@ -55,3 +55,58 @@
         </div>
     </div>
 </div>
+
+
+@* @using CarBookingNew.Api
+@using Data.Models
+@inject CarService CarService
+
+@if (cars == null)
+{
+    <div class="alert alert-info">Chargement...</div>
+}
+else if (cars.Count == 0)
+{
+    <div class="alert alert-warning">Aucune voiture trouvée.</div>
+}
+else
+{
+    <div class="row">
+        @foreach (var car in cars)
+        {
+            <div class="col-md-4">
+                <CarCard Car="car" OnToggleReservation="ToggleReservation" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    [Parameter] public EventCallback<CarFilter> OnFilter { get; set; }
+
+    private List<Car>? cars;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cars = await CarService.GetAllCarsAsync();
+    }
+
+    private async Task ToggleReservation(int carId)
+    {
+        await CarService.ToggleReservationAsync(carId);
+        cars = await CarService.GetAllCarsAsync();
+    }
+
+    private async Task ApplyFilter(CarFilter filter)
+    {
+        cars = await CarService.FilterCarsAsync(
+            filter.Couleur,
+            filter.Carburant,
+            filter.Places,
+            filter.Modele
+        );
+    }
+}
+ *@
+

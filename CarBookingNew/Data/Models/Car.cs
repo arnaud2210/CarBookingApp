@@ -13,5 +13,7 @@ namespace CarBookingNew.Data.Models
         public FuelType Carburant { get; set; }
         public int NombreDePlaces { get; set; }
         public bool EstReservee { get; set; } = false;
+        public string? ImageUrl { get; set; }
+
     }
 }

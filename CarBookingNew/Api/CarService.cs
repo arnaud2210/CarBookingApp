@@ -44,5 +44,25 @@ namespace CarBookingNew.Api
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task ReserveCarAsync(int carId)
+        {
+            var car = await _context.Cars.FindAsync(carId);
+            if (car != null && !car.EstReservee)
+            {
+                car.EstReservee = true;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task CancelReservationAsync(int carId)
+        {
+            var car = await _context.Cars.FindAsync(carId);
+            if (car != null && car.EstReservee)
+            {
+                car.EstReservee = false;
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@using Data.Models
+﻿@* @using Data.Models
 @code {
     [Parameter] public Car Car { get; set; } = default!;
     [Parameter] public EventCallback<int> OnToggle { get; set; }
@@ -25,3 +25,56 @@
         </button>
     </div>
 </div>
+ *@
+
+@using Data.Models
+@inject NavigationManager NavManager
+
+<div class="card mb-4">
+    <img src="@GetImageUrl()" class="card-img-top" alt="Voiture" style="max-height:200px; object-fit:cover;" />
+    <div class="card-body">
+        <h5 class="card-title">@Car.Marque @Car.Modele</h5>
+        <p class="card-text">
+            <strong>Couleur:</strong> @Car.Couleur<br />
+            <strong>Carburant:</strong> @Car.Carburant<br />
+            <strong>Places:</strong> @Car.NombreDePlaces
+        </p>
+
+        <span class="badge @GetEtatCss()">
+            @(Car.EstReservee ? "Indisponible" : "Disponible")
+        </span>
+        <br />
+
+        <button class="btn btn-primary" @onclick="() => OnToggleReservation.InvokeAsync(Car.Id)">
+            @(Car.EstReservee ? "Annuler" : "Réserver")
+        </button>
+
+        @* <button class="@GetButtonCss() mt-3"
+                @onclick="HandleToggleReservation" type="button">
+            @(Car.EstReservee ? "Annuler la réservation" : "Réserver")
+        </button> *@
+    </div>
+</div>
+
+@code {
+    [Parameter] public Car Car { get; set; } = default!;
+    [Parameter] public EventCallback<int> OnToggleReservation { get; set; }
+
+    private async Task HandleToggleReservation()
+    {   
+        await OnToggleReservation.InvokeAsync(Car.Id);
+    }
+
+    private string GetImageUrl()
+    {
+        return string.IsNullOrEmpty(Car.ImageUrl)
+            ? "images/default.jpg"
+            : Car.ImageUrl;
+    }
+
+    private string GetEtatCss() =>
+        Car.EstReservee ? "bg-warning text-dark" : "bg-success";
+
+    private string GetButtonCss() =>
+        Car.EstReservee ? "btn btn-outline-warning" : "btn btn-outline-primary";
+}

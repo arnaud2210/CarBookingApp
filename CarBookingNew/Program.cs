@@ -2,14 +2,14 @@ using CarBookingNew.Api;
 using CarBookingNew.Components;
 using CarBookingNew.Data;
 using Microsoft.EntityFrameworkCore;
-using SQLitePCL;
+//using SQLitePCL;
 
-Batteries.Init();
+//Batteries.Init();
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<CarDbContext>(options =>
-    options.UseSqlite("Data Source=car_reservations.db"));
+    options.UseSqlite("Data Source=carbooking.db"));
 
 builder.Services.AddScoped<CarService>();
 builder.Services.AddRazorPages();
@@ -22,7 +22,9 @@ builder.Services.AddRazorComponents()
 var app = builder.Build();
 
 app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+//app.MapFallbackToPage("/_Host");
+app.MapRazorComponents<App>()
+   .AddInteractiveServerRenderMode();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -46,7 +48,6 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<CarDbContext>();
     db.Database.EnsureCreated();
-    db.Database.Migrate();
     SeedData.Initialize(scope.ServiceProvider);
 }
 
