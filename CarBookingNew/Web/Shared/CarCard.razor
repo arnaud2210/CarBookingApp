@@ -1,0 +1,27 @@
+﻿@using Data.Models
+@code {
+    [Parameter] public Car Car { get; set; } = default!;
+    [Parameter] public EventCallback<int> OnToggle { get; set; }
+
+    private string GetBadgeClass() => Car.EstReservee ? "bg-danger" : "bg-success";
+    private string GetButtonClass() => Car.EstReservee ? "btn-success" : "btn-danger";
+    private string GetStatus() => Car.EstReservee ? "Réservée" : "Disponible";
+    private string GetActionText() => Car.EstReservee ? "Rendre disponible" : "Réserver";
+}
+
+<div class="card mb-3 shadow-sm">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title">@Car.Marque @Car.Modele</h5>
+            <span class="badge @GetBadgeClass()">@GetStatus()</span>
+        </div>
+        <ul class="list-unstyled text-muted">
+            <li>Couleur : <strong>@Car.Couleur</strong></li>
+            <li>Carburant : <strong>@Car.Carburant</strong></li>
+            <li>Places : <strong>@Car.NombreDePlaces</strong></li>
+        </ul>
+        <button class="btn @GetButtonClass() mt-2" @onclick="() => OnToggle.InvokeAsync(Car.Id)">
+            @GetActionText()
+        </button>
+    </div>
+</div>

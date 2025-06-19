@@ -1,0 +1,53 @@
+﻿@page "/cars"
+@using CarBookingApp.Data.Models
+@using CarBookingApp.Services
+@inject CarService CarService
+
+<h2 class="text-2xl font-bold mb-4">Car Fleet</h2>
+
+@if (cars == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @foreach (var car in cars)
+        {
+            <div class="border rounded p-4 shadow-md bg-white">
+                <h3 class="font-semibold text-lg">@car.Brand @car.Model</h3>
+                <p><strong>Color:</strong> @car.Color</p>
+                <p><strong>Fuel:</strong> @car.Electric</p>
+                <p><strong>Seats:</strong> @car.SeatCount</p>
+                <p>
+                    <strong>Status:</strong>
+                    <span class="@GetStatusClass(car.IsReserved)">
+                        @(car.IsReserved ? "Reserved" : "Available")
+                    </span>
+                </p>
+                <button class="mt-2 px-4 py-2 rounded bg-blue-600 text-white"
+                        @onclick="@(() => Toggle(car.Id))">
+                    Toggle Reservation
+                </button>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    List<Car>? cars;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cars = await CarService.GetCars();
+    }
+
+    private async Task Toggle(int id)
+    {
+        await CarService.ToggleReservation(id);
+        cars = await CarService.GetCars();
+    }
+
+    private string GetStatusClass(bool reserved) =>
+        reserved ? "text-red-500" : "text-green-600";
+}

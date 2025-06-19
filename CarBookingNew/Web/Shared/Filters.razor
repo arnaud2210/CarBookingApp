@@ -1,0 +1,57 @@
+﻿@using Data.Models
+@code {
+    [Parameter] public EventCallback<CarFilter> OnFilter { get; set; }
+
+    private string? couleur;
+    private FuelType? carburant;
+    private int? places;
+    private string? modele;
+
+    private async Task Apply()
+    {
+        var filter = new CarFilter
+        {
+            Couleur = couleur,
+            Carburant = carburant,
+            Places = places,
+            Modele = modele
+        };
+
+        await OnFilter.InvokeAsync(filter);
+    }
+
+    private void Reset()
+    {
+        couleur = null;
+        carburant = null;
+        places = null;
+        modele = null;
+    }
+}
+
+<div class="border p-3 mb-4 bg-light rounded">
+    <div class="row g-3">
+        <div class="col-md-3">
+            <input class="form-control" placeholder="Couleur" @bind="couleur" />
+        </div>
+        <div class="col-md-2">
+            <select class="form-select" @bind="carburant">
+                <option value="">Carburant</option>
+                <option value="@FuelType.Essence">Essence</option>
+                <option value="@FuelType.Electrique">Électrique</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input class="form-control" type="number" placeholder="Places" @bind="places" />
+        </div>
+        <div class="col-md-3">
+            <input class="form-control" placeholder="Modèle" @bind="modele" />
+        </div>
+        <div class="col-md-1 d-grid">
+            <button class="btn btn-primary" @onclick="Apply">Filtrer</button>
+        </div>
+        <div class="col-md-1 d-grid">
+            <button class="btn btn-outline-secondary" @onclick="Reset">Reset</button>
+        </div>
+    </div>
+</div>
